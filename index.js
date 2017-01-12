@@ -32,16 +32,17 @@ app.get('/db', function (request, response) {
 	});
 });
 
-app.get('/db2', function (request, response) {
-	pg.defaults.ssl = true;
+app.get('/getOrder', function (request, response) {
+	console.log('getOrder ...');
+	console.log(process.env.DATABASE_URL);
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
-	  if (err) throw err;
-	  console.log('Get data from server...');
-	  client.query('SELECT name FROM salesforce.account;', function(err, result) {
-		 if (err){
-			console.error(err); response.send("Error " + err); 
-		}else{ 
-			response.render('pages/db2', {results: result.rows} ); 
+	  	if (err) throw err;
+	  	console.log('Get data from server...');
+	  	client.query('SELECT Order__c, CustomerName__c, ProductName__c FROM Order__c ;', function(err, result) {
+		 	if (err){
+				console.error(err); response.send("Error " + err); 
+			}else{ 
+				response.send(result.rows); 
 			}
 		});
 	});
