@@ -1,7 +1,7 @@
 var express = require('express');
 var app = express();
 var pg = require('pg');
-var bodyParser = require('body-parser');
+//var bodyParser = require('body-parser');
 // var request = require('request');
 // var querystring = require('querystring');
 // var http = require('http');
