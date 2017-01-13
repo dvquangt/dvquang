@@ -59,7 +59,7 @@ app.get('/api/getOrder', function (request, response) {
 });
 
 app.get('/api/order-detail/:id', function (request, response) {
-	var orderNo = req.params.id;
+	var orderNo = request.params.id;
 	if(id === ''){
 		response.send('fasle'); 
 	}
