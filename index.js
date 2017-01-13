@@ -56,7 +56,7 @@ app.get('/api/getOrder', function (request, response) {
 	});
 });
 
-app.get('/api/login', function (request, response) {
+app.post('/api/login', function (request, response) {
 	var data = {};
 	data.user = request.body.username;
 	data.pass = request.body.password;
