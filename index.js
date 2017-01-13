@@ -1,14 +1,16 @@
 var express = require('express');
-var app = express();
 var pg = require('pg');
 var bodyParser = require('body-parser');
-// var request = require('request');
+var app = express();
+var request = require('request');
 // var querystring = require('querystring');
 // var http = require('http');
 
 app.set('port', (process.env.PORT || 5000));
 
 app.use(express.static(__dirname + '/public'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // views is directory for all template files
 app.set('views', __dirname + '/views');
@@ -56,10 +58,29 @@ app.get('/api/getOrder', function (request, response) {
 	});
 });
 
-app.post('/api/login', function (request, response) {
-	var data = {};
-	data.user = request.body.username;
-	data.pass = request.body.password;
-	response.send(data);
+app.get('/api/login/:username/:password', function (req, res) {
+	var data = {
+		user: req.params.username,
+		pass: req.params.password
+	};
+	var SF = "https://login.salesforce.com/services/oauth2/token";
+	request({
+	  uri: "https://login.salesforce.com/services/oauth2/token",
+	  method: "POST",
+	  form: {
+	    grant_type: "password",
+	    client_id: "3MVG9ZL0ppGP5UrBkp4gcpR4zFArWdyWq_uSvtxHqB2Kh3XW9.DtvHL6_BBORBjn3MSRNvfQtldgmQL3VWb7D",
+	    client_secret: "4597579409077764254",
+	    username: req.params.username,
+	    password: req.params.password
+	  }
+	}, function(error, response, body) {
+		var dt = JSON.parse(body);
+		if(dt["access_token"] !== undefined){
+			res.send('true');
+		}else{
+			res.send('false');
+		}
+	});
 });
 
