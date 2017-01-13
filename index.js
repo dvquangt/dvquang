@@ -60,7 +60,7 @@ app.get('/api/getOrder', function (request, response) {
 
 app.get('/api/order-detail/:id', function (request, response) {
 	var orderNo = request.params.id;
-	if(id === ''){
+	if(orderNo === ''){
 		response.send('fasle'); 
 	}
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
