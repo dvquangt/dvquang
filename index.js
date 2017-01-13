@@ -58,6 +58,23 @@ app.get('/api/getOrder', function (request, response) {
 	});
 });
 
+app.get('/api/order-detail/:id', function (request, response) {
+	var orderNo = req.params.id;
+	if(id === ''){
+		response.send('fasle'); 
+	}
+	pg.connect(process.env.DATABASE_URL, function(err, client) {
+	  	if (err) throw err;
+	  	client.query('SELECT id, Order__c, CustomerName__c, ProductName__c,quantity__c,unitprice__c,orderdate__c FROM salesforce.Order__c WHERE Order__c = ' + orderNo + ' ;', function(err, result) {
+		 	if (err){
+				console.error(err); response.send("Error " + err); 
+			}else{ 
+				response.send(result.rows); 
+			}
+		});
+	});
+});
+
 app.get('/api/login/:username/:password', function (req, res) {
 	var data = {
 		user: req.params.username,
