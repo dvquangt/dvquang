@@ -3,8 +3,6 @@ var pg = require('pg');
 var bodyParser = require('body-parser');
 var app = express();
 var request = require('request');
-// var querystring = require('querystring');
-// var http = require('http');
 
 app.set('port', (process.env.PORT || 5000));
 
@@ -76,11 +74,6 @@ app.get('/api/order-detail/:id', function (request, response) {
 });
 
 app.get('/api/login/:username/:password', function (req, res) {
-	var data = {
-		user: req.params.username,
-		pass: req.params.password
-	};
-	var SF = "https://login.salesforce.com/services/oauth2/token";
 	request({
 	  uri: "https://login.salesforce.com/services/oauth2/token",
 	  method: "POST",
