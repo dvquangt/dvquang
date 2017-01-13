@@ -1,6 +1,10 @@
 var express = require('express');
 var app = express();
 var pg = require('pg');
+var bodyParser = require('body-parser');
+// var request = require('request');
+// var querystring = require('querystring');
+// var http = require('http');
 
 app.set('port', (process.env.PORT || 5000));
 
@@ -39,12 +43,9 @@ app.get('/db', function (request, response) {
 	});
 });
 
-app.get('/getOrder', function (request, response) {
-	console.log('getOrder ...');
-	console.log(process.env.DATABASE_URL);
+app.get('/api/getOrder', function (request, response) {
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
 	  	if (err) throw err;
-	  	console.log('Get data from server...');
 	  	client.query('SELECT Order__c, CustomerName__c, ProductName__c FROM salesforce.Order__c ;', function(err, result) {
 		 	if (err){
 				console.error(err); response.send("Error " + err); 
@@ -53,5 +54,12 @@ app.get('/getOrder', function (request, response) {
 			}
 		});
 	});
+});
+
+app.get('/api/login', function (request, response) {
+	var data = {};
+	data.user = request.body.username;
+	data.pass = request.body.password;
+	response.send(data);
 });
 
