@@ -80,7 +80,16 @@ app.get('/api/login/:username/:password', function (req, res) {
 });
 
 app.post('/api/updateOrder', function(req, res){
-	console.log(req.body);
-	res.send(req.body);
+	var data = req.body;
+	pg.connect(process.env.DATABASE_URL, function(err, client) {
+	  	if (err) throw err;
+	  	client.query("UPDATE salesforce.Order__c SET CustomerName__c = {$1}, ProductName__c = {$2},quantity__c = {3},unitprice__c = {$4} ,orderdate__c = {$5} FROM salesforce.Order__c WHERE id = {$6}",[data.customername__c, data.productname__c, data.quantity__c, data.unitprice__c, data.orderdate__c, data.id], function(err, result) {
+		 	if (err){
+				response.send("Error " + err); 
+			}else{ 
+				response.send('true'); 
+			}
+		});
+	});
 });
 
