@@ -28,21 +28,6 @@ app.all('*', function(req, res, next) {
     next();
 });
 
-app.get('/db', function (request, response) {
-	pg.defaults.ssl = true;
-	pg.connect(process.env.DATABASE_URL, function(err, client) {
-	  if (err) throw err;
-	  console.log('Get data from server...');
-	  client.query('SELECT hohocsinh__c, tenhocsinh__c FROM salesforce.hocsinh__c;', function(err, result) {
-		 if (err){
-			console.error(err); response.send("Error " + err); 
-		}else{ 
-			response.render('pages/db', {results: result.rows} ); 
-			}
-		});
-	});
-});
-
 app.get('/api/getOrder', function (request, response) {
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
 	  	if (err) throw err;
@@ -92,5 +77,9 @@ app.get('/api/login/:username/:password', function (req, res) {
 			res.send('false');
 		}
 	});
+});
+
+app.post('/api/updateOrder', function(req, res){
+	console.log(req.body);
 });
 
