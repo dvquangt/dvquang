@@ -34,7 +34,7 @@ app.get('/api/getOrder', function (request, response) {
 	  	if (err) throw err;
 	  	client.query('SELECT Order__c, CustomerName__c, ProductName__c FROM salesforce.Order__c ;', function(err, result) {
 		 	if (err){
-				console.error(err); response.send("Error " + err); 
+				response.send("Error " + err); 
 			}else{ 
 				response.send(result.rows); 
 			}
@@ -51,7 +51,7 @@ app.get('/api/order-detail/:id', function (request, response) {
 	  	if (err) throw err;
 	  	client.query("SELECT id, Order__c, CustomerName__c, ProductName__c,quantity__c,unitprice__c,orderdate__c FROM salesforce.Order__c WHERE Order__c = '" + orderNo + "' ;", function(err, result) {
 		 	if (err){
-				console.error(err); response.send("Error " + err); 
+				response.send("Error " + err); 
 			}else{ 
 				response.send(result.rows); 
 			}
@@ -59,7 +59,7 @@ app.get('/api/order-detail/:id', function (request, response) {
 	});
 });
 
-app.get('/api/login/:username/:password', function (req, res) {
+app.post('/api/login', function (req, res) {
 	request({
 	  uri: "https://login.salesforce.com/services/oauth2/token",
 	  method: "POST",
@@ -67,13 +67,22 @@ app.get('/api/login/:username/:password', function (req, res) {
 	    grant_type: "password",
 	    client_id: "3MVG9ZL0ppGP5UrBkp4gcpR4zFArWdyWq_uSvtxHqB2Kh3XW9.DtvHL6_BBORBjn3MSRNvfQtldgmQL3VWb7D",
 	    client_secret: "4597579409077764254",
-	    username: req.params.username,
-	    password: req.params.password
+	    username: req.body.username,
+	    password: req.body.password
 	  }
 	}, function(error, response, body) {
 		var dt = JSON.parse(body);
 		if(dt["access_token"] !== undefined){
-			res.send('true');
+			pg.connect(process.env.DATABASE_URL, function(err, client) {
+			  	if (err) throw err;
+			  	client.query("SELECT id, sfid, canaccesscontact__c, canaccessorder__c FROM salesforce.User WHERE username ='" + req.body.username + "' ;", function(err, result) {
+				 	if (err){
+						res.send('false'); 
+					}else{ 
+						res.send(result.rows); 
+					}
+				});
+			});
 		}else{
 			res.send('false');
 		}
@@ -94,3 +103,15 @@ app.post('/api/updateOrder', function(req, res){
 	});
 });
 
+app.post('/api/getContact', function(req, res){
+	pg.connect(process.env.DATABASE_URL, function(err, client) {
+	  	if (err) throw err;
+	  	client.query('SELECT id, name, email, phone FROM salesforce.Contact ;', function(err, result) {
+		 	if (err){
+				res.send("Error " + err); 
+			}else{ 
+				res.send(result.rows); 
+			}
+		});
+	});
+});
