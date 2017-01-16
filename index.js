@@ -71,7 +71,7 @@ app.post('/api/login', function (req, res) {
 	}, function(error, response, body) {
 		var dt = JSON.parse(body);
 		if(dt["access_token"] !== undefined){
-		  	client.query("SELECT id, sfid, canaccesscontact__c, canaccessorder__c FROM salesforce.User WHERE username ='" + req.body.username + "' ;", function(err, result) {
+		  	connection.query("SELECT id, sfid, canaccesscontact__c, canaccessorder__c FROM salesforce.User WHERE username ='" + req.body.username + "' ;", function(err, result) {
 			 	if (err){
 					res.send('false'); 
 				}else{ 
@@ -86,7 +86,7 @@ app.post('/api/login', function (req, res) {
 
 app.post('/api/updateOrder', function(req, res){
 	var data = req.body;
-  	client.query("UPDATE salesforce.Order__c SET customername__c = $1, productname__c = $2,quantity__c = $3,unitprice__c = $4,orderdate__c = $5 WHERE id = $6;",[data.customername__c, data.productname__c, data.quantity__c, data.unitprice__c, data.orderdate__c, data.id], function(err, result) {
+  	connection.query("UPDATE salesforce.Order__c SET customername__c = $1, productname__c = $2,quantity__c = $3,unitprice__c = $4,orderdate__c = $5 WHERE id = $6;",[data.customername__c, data.productname__c, data.quantity__c, data.unitprice__c, data.orderdate__c, data.id], function(err, result) {
 	 	if (err){
 			res.send("Error " + err); 
 		}else{ 
@@ -97,7 +97,7 @@ app.post('/api/updateOrder', function(req, res){
 
 app.post('/api/insertOrder', function(req, res){
 	var data = req.body;
-  	client.query("INSERT INTO salesforce.Order__c(customername__c, productname__c, orderdate__c, quantity__c, unitprice__c) VALUES ($1, $2, $3, $4, $5);",[data.customername__c, data.productname__c, data.orderdate__c, data.quantity__c, data.unitprice__c], function(err, result) {
+  	connection.query("INSERT INTO salesforce.Order__c(customername__c, productname__c, orderdate__c, quantity__c, unitprice__c) VALUES ($1, $2, $3, $4, $5);",[data.customername__c, data.productname__c, data.orderdate__c, data.quantity__c, data.unitprice__c], function(err, result) {
 	 	if (err){
 			res.send("Error " + err); 
 		}else{ 
@@ -107,7 +107,7 @@ app.post('/api/insertOrder', function(req, res){
 });
 
 app.post('/api/getContact', function(req, res){
-  	client.query('SELECT id, name, email, phone FROM salesforce.Contact ;', function(err, result) {
+  	connection.query('SELECT id, name, email, phone FROM salesforce.Contact ;', function(err, result) {
 	 	if (err){
 			res.send("Error " + err); 
 		}else{ 
