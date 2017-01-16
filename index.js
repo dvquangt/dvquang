@@ -103,6 +103,20 @@ app.post('/api/updateOrder', function(req, res){
 	});
 });
 
+app.post('/api/insertOrder', function(req, res){
+	var data = req.body;
+	pg.connect(process.env.DATABASE_URL, function(err, client) {
+	  	if (err) throw err;
+	  	client.query("INSERT INTO salesforce.Order__c(customername__c, productname__c, orderdate__c, quantity__c, unitprice__c) VALUES ($1, $2, $3, $4, $5);",[data.customername__c, data.productname__c, data.orderdate__c, data.quantity__c, data.unitprice__c], function(err, result) {
+		 	if (err){
+				res.send("Error " + err); 
+			}else{ 
+				res.send('true'); 
+			}
+		});
+	});
+});
+
 app.post('/api/getContact', function(req, res){
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
 	  	if (err) throw err;
