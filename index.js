@@ -4,6 +4,10 @@ pg.defaults.ssl = true;
 var bodyParser = require('body-parser');
 var app = express();
 var request = require('request');
+var connection = pg.connect(process.env.DATABASE_URL, function(err, client) {
+		if (err) throw err;
+		connection = client;
+	});
 
 app.set('port', (process.env.PORT || 5000));
 
@@ -30,15 +34,12 @@ app.all('*', function(req, res, next) {
 });
 
 app.get('/api/getOrder', function (request, response) {
-	pg.connect(process.env.DATABASE_URL, function(err, client) {
-	  	if (err) throw err;
-	  	client.query('SELECT Order__c, CustomerName__c, ProductName__c FROM salesforce.Order__c ;', function(err, result) {
-		 	if (err){
-				response.send("Error " + err); 
-			}else{ 
-				response.send(result.rows); 
-			}
-		});
+  	connection.query('SELECT Order__c, CustomerName__c, ProductName__c FROM salesforce.Order__c ;', function(err, result) {
+	 	if (err){
+			response.send("Error " + err); 
+		}else{ 
+			response.send(result.rows); 
+		}
 	});
 });
 
@@ -47,15 +48,12 @@ app.get('/api/order-detail/:id', function (request, response) {
 	if(orderNo === ''){
 		response.send('fasle'); 
 	}
-	pg.connect(process.env.DATABASE_URL, function(err, client) {
-	  	if (err) throw err;
-	  	client.query("SELECT id, Order__c, CustomerName__c, ProductName__c,quantity__c,unitprice__c,orderdate__c FROM salesforce.Order__c WHERE Order__c = '" + orderNo + "' ;", function(err, result) {
-		 	if (err){
-				response.send("Error " + err); 
-			}else{ 
-				response.send(result.rows); 
-			}
-		});
+  	connection.query("SELECT id, Order__c, CustomerName__c, ProductName__c,quantity__c,unitprice__c,orderdate__c FROM salesforce.Order__c WHERE Order__c = '" + orderNo + "' ;", function(err, result) {
+	 	if (err){
+			response.send("Error " + err); 
+		}else{ 
+			response.send(result.rows); 
+		}
 	});
 });
 
@@ -73,15 +71,12 @@ app.post('/api/login', function (req, res) {
 	}, function(error, response, body) {
 		var dt = JSON.parse(body);
 		if(dt["access_token"] !== undefined){
-			pg.connect(process.env.DATABASE_URL, function(err, client) {
-			  	if (err) throw err;
-			  	client.query("SELECT id, sfid, canaccesscontact__c, canaccessorder__c FROM salesforce.User WHERE username ='" + req.body.username + "' ;", function(err, result) {
-				 	if (err){
-						res.send('false'); 
-					}else{ 
-						res.send(result.rows); 
-					}
-				});
+		  	client.query("SELECT id, sfid, canaccesscontact__c, canaccessorder__c FROM salesforce.User WHERE username ='" + req.body.username + "' ;", function(err, result) {
+			 	if (err){
+					res.send('false'); 
+				}else{ 
+					res.send(result.rows); 
+				}
 			});
 		}else{
 			res.send('false');
@@ -91,41 +86,32 @@ app.post('/api/login', function (req, res) {
 
 app.post('/api/updateOrder', function(req, res){
 	var data = req.body;
-	pg.connect(process.env.DATABASE_URL, function(err, client) {
-	  	if (err) throw err;
-	  	client.query("UPDATE salesforce.Order__c SET customername__c = $1, productname__c = $2,quantity__c = $3,unitprice__c = $4,orderdate__c = $5 WHERE id = $6;",[data.customername__c, data.productname__c, data.quantity__c, data.unitprice__c, data.orderdate__c, data.id], function(err, result) {
-		 	if (err){
-				res.send("Error " + err); 
-			}else{ 
-				res.send('true'); 
-			}
-		});
+  	client.query("UPDATE salesforce.Order__c SET customername__c = $1, productname__c = $2,quantity__c = $3,unitprice__c = $4,orderdate__c = $5 WHERE id = $6;",[data.customername__c, data.productname__c, data.quantity__c, data.unitprice__c, data.orderdate__c, data.id], function(err, result) {
+	 	if (err){
+			res.send("Error " + err); 
+		}else{ 
+			res.send('true'); 
+		}
 	});
 });
 
 app.post('/api/insertOrder', function(req, res){
 	var data = req.body;
-	pg.connect(process.env.DATABASE_URL, function(err, client) {
-	  	if (err) throw err;
-	  	client.query("INSERT INTO salesforce.Order__c(customername__c, productname__c, orderdate__c, quantity__c, unitprice__c) VALUES ($1, $2, $3, $4, $5);",[data.customername__c, data.productname__c, data.orderdate__c, data.quantity__c, data.unitprice__c], function(err, result) {
-		 	if (err){
-				res.send("Error " + err); 
-			}else{ 
-				res.send('true'); 
-			}
-		});
+  	client.query("INSERT INTO salesforce.Order__c(customername__c, productname__c, orderdate__c, quantity__c, unitprice__c) VALUES ($1, $2, $3, $4, $5);",[data.customername__c, data.productname__c, data.orderdate__c, data.quantity__c, data.unitprice__c], function(err, result) {
+	 	if (err){
+			res.send("Error " + err); 
+		}else{ 
+			res.send('true'); 
+		}
 	});
 });
 
 app.post('/api/getContact', function(req, res){
-	pg.connect(process.env.DATABASE_URL, function(err, client) {
-	  	if (err) throw err;
-	  	client.query('SELECT id, name, email, phone FROM salesforce.Contact ;', function(err, result) {
-		 	if (err){
-				res.send("Error " + err); 
-			}else{ 
-				res.send(result.rows); 
-			}
-		});
+  	client.query('SELECT id, name, email, phone FROM salesforce.Contact ;', function(err, result) {
+	 	if (err){
+			res.send("Error " + err); 
+		}else{ 
+			res.send(result.rows); 
+		}
 	});
 });
