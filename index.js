@@ -34,7 +34,7 @@ app.all('*', function(req, res, next) {
 });
 
 app.get('/api/getOrder', function (request, response) {
-  	connection.query('SELECT Order__c, CustomerName__c, ProductName__c FROM salesforce.Order__c ;', function(err, result) {
+  	connection.query('SELECT id, Order__c, CustomerName__c, ProductName__c FROM salesforce.Order__c ;', function(err, result) {
 	 	if (err){
 			response.send("Error " + err); 
 		}else{ 
@@ -44,11 +44,11 @@ app.get('/api/getOrder', function (request, response) {
 });
 
 app.get('/api/order-detail/:id', function (request, response) {
-	var orderNo = request.params.id;
-	if(orderNo === ''){
+	var id = request.params.id;
+	if(id === ''){
 		response.send('fasle'); 
 	}
-  	connection.query("SELECT id, Order__c, CustomerName__c, ProductName__c,quantity__c,unitprice__c,orderdate__c FROM salesforce.Order__c WHERE Order__c = '" + orderNo + "' ;", function(err, result) {
+  	connection.query("SELECT id, Order__c, CustomerName__c, ProductName__c,quantity__c,unitprice__c,orderdate__c FROM salesforce.Order__c WHERE id = " + id + " ;", function(err, result) {
 	 	if (err){
 			response.send("Error " + err); 
 		}else{ 
