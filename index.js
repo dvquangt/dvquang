@@ -81,5 +81,6 @@ app.get('/api/login/:username/:password', function (req, res) {
 
 app.post('/api/updateOrder', function(req, res){
 	console.log(req.body);
+	res.send(req.body);
 });
 
