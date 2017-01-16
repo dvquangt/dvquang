@@ -83,7 +83,7 @@ app.post('/api/updateOrder', function(req, res){
 	var data = req.body;
 	pg.connect(process.env.DATABASE_URL, function(err, client) {
 	  	if (err) throw err;
-	  	client.query("UPDATE salesforce.Order__c SET CustomerName__c = {$1}, ProductName__c = {$2},quantity__c = {3},unitprice__c = {$4} ,orderdate__c = {$5} FROM salesforce.Order__c WHERE id = {$6}",[data.customername__c, data.productname__c, data.quantity__c, data.unitprice__c, data.orderdate__c, data.id], function(err, result) {
+	  	client.query("UPDATE salesforce.Order__c SET CustomerName__c = {$1}, ProductName__c = {$2},quantity__c = {$3},unitprice__c = {$4} ,orderdate__c = {$5} FROM salesforce.Order__c WHERE id = {$6}",[data.customername__c, data.productname__c, data.quantity__c, data.unitprice__c, data.orderdate__c, data.id], function(err, result) {
 		 	if (err){
 				res.send("Error " + err); 
 			}else{ 
