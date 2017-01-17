@@ -8,7 +8,9 @@ var connection = pg.connect(process.env.DATABASE_URL, function(err, client) {
 		if (err) throw err;
 		connection = client;
 	});
-
+app.listen(app.get('port'), function() {
+  console.log('Node app is running on port', app.get('port'));
+});
 // Start SocketIO
 var socketIO = require('socket.io'),
     http = require('http'),
@@ -47,10 +49,6 @@ app.set('view engine', 'ejs');
 
 app.get('/', function(request, response) {
   response.render('pages/index');
-});
-
-app.listen(app.get('port'), function() {
-  console.log('Node app is running on port', app.get('port'));
 });
 
 app.all('*', function(req, res, next) {
