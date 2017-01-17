@@ -4,36 +4,35 @@ pg.defaults.ssl = true;
 var bodyParser = require('body-parser');
 var app = express();
 var request = require('request');
-var http = require('http')
 var connection = pg.connect(process.env.DATABASE_URL, function(err, client) {
 		if (err) throw err;
 		connection = client;
 	});
 
 // Start SocketIO
-// var socketIO = require('socket.io'),
-//     http = require('http'),
-//     port = process.env.PORT || 5000,
-//     ip = process.env.IP || '192.168.0.120',
-//     server = http.createServer().listen(port, ip, function(){
-//         console.log('Started Socket.IO');
-//     }),
-//     io = socketIO.listen(server);
-// io.set('match origin protocol', true);
-// io.set('origins', '*:*');
-// var run = function (socket){
-//     socket.on('user-join', function (data) {
-//         console.log('User ' + data + ' have joined');
-//         socket.broadcast.emit('new-user', data);
-//     });
-//     socket.on('user-join', function (data) {
-//         socket.broadcast.emit('new-user', data);
-//     });
-//     socket.on('sendMessage', function(data, user){
-//         socket.broadcast.emit('receiveMessage', data, user);
-//     });
-// }
-// io.sockets.on('connection', run);
+var socketIO = require('socket.io'),
+    http = require('http'),
+    port = process.env.PORT || 5000,
+    ip = process.env.IP || '192.168.0.120',
+    server = http.createServer().listen(port, ip, function(){
+        console.log('Started Socket.IO');
+    }),
+    io = socketIO.listen(server);
+io.set('match origin protocol', true);
+io.set('origins', '*:*');
+var run = function (socket){
+    socket.on('user-join', function (data) {
+        console.log('User ' + data + ' have joined');
+        socket.broadcast.emit('new-user', data);
+    });
+    socket.on('user-join', function (data) {
+        socket.broadcast.emit('new-user', data);
+    });
+    socket.on('sendMessage', function(data, user){
+        socket.broadcast.emit('receiveMessage', data, user);
+    });
+}
+io.sockets.on('connection', run);
 // end SocketIO
 
 app.set('port', (process.env.PORT || 5000));
