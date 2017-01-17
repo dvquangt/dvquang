@@ -4,6 +4,7 @@ pg.defaults.ssl = true;
 var bodyParser = require('body-parser');
 var app = express();
 var request = require('request');
+var http = require('http')
 var connection = pg.connect(process.env.DATABASE_URL, function(err, client) {
 		if (err) throw err;
 		connection = client;
@@ -21,13 +22,12 @@ var connection = pg.connect(process.env.DATABASE_URL, function(err, client) {
 // io.set('match origin protocol', true);
 // io.set('origins', '*:*');
 // var run = function (socket){
-//     socket.emit('access', 'Access successfully!');
 //     socket.on('user-join', function (data) {
 //         console.log('User ' + data + ' have joined');
 //         socket.broadcast.emit('new-user', data);
 //     });
-//     socket.on('user-logout', function (data) {
-//         socket.broadcast.emit('logout-user', data);
+//     socket.on('user-join', function (data) {
+//         socket.broadcast.emit('new-user', data);
 //     });
 //     socket.on('sendMessage', function(data, user){
 //         socket.broadcast.emit('receiveMessage', data, user);
