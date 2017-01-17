@@ -92,7 +92,7 @@ app.post('/api/login', function (req, res) {
 	}, function(error, response, body) {
 		var dt = JSON.parse(body);
 		if(dt["access_token"] !== undefined){
-		  	connection.query("SELECT id, sfid, canaccesscontact__c, canaccessorder__c FROM salesforce.User WHERE username ='" + req.body.username + "' ;", function(err, result) {
+		  	connection.query("SELECT id, name, canaccesscontact__c, canaccessorder__c FROM salesforce.User WHERE username ='" + req.body.username + "' ;", function(err, result) {
 			 	if (err){
 					res.send('false'); 
 				}else{ 
