@@ -9,6 +9,33 @@ var connection = pg.connect(process.env.DATABASE_URL, function(err, client) {
 		connection = client;
 	});
 
+// Start SocketIO
+var socketIO = require('socket.io'),
+    http = require('http'),
+    port = process.env.PORT || 5000,
+    ip = process.env.IP || '192.168.0.120',
+    server = http.createServer().listen(port, ip, function(){
+        console.log('Started Socket.IO');
+    }),
+    io = socketIO.listen(server);
+io.set('match origin protocol', true);
+io.set('origins', '*:*');
+var run = function (socket){
+    socket.emit('access', 'Access successfully!');
+    socket.on('user-join', function (data) {
+        console.log('User ' + data + ' have joined');
+        socket.broadcast.emit('new-user', data);
+    });
+    socket.on('user-logout', function (data) {
+        socket.broadcast.emit('logout-user', data);
+    });
+    socket.on('sendMessage', function(data, user){
+        socket.broadcast.emit('receiveMessage', data, user);
+    });
+}
+io.sockets.on('connection', run);
+// end SocketIO
+
 app.set('port', (process.env.PORT || 5000));
 
 app.use(express.static(__dirname + '/public'));
