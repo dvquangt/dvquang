@@ -10,12 +10,17 @@ var connection = pg.connect(process.env.DATABASE_URL, function(err, client) {
 	});
 
 // Start SocketIO
-var http = require('http'), io = require('socket.io');
-var server = http.createServer(function(req, res){ 
-	console.log('Started Socket.IO');
-});
+var server = require('http').createServer(app);
+var io = require('socket.io').listen(server);
 server.listen(8080);
-var socket = io.listen(server);
+// var socketIO = require('socket.io'),
+//     http = require('http'),
+//     server = http.createServer().listen(8080, function(){
+//         console.log('Started Socket.IO');
+//     }),
+//     io = socketIO.listen(server);
+// io.set('match origin protocol', true);
+// io.set('origins', '*:*');
 var run = function (socket){
     socket.on('user-join', function (data) {
         console.log('User ' + data + ' have joined');
@@ -28,7 +33,7 @@ var run = function (socket){
         socket.broadcast.emit('receiveMessage', data, user);
     });
 }
-socket.on('connection', run);
+io.on('connection', run);
 // end SocketIO
 
 app.set('port', (process.env.PORT || 5000));
