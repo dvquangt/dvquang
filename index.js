@@ -43,8 +43,8 @@ var run = function (socket){
         console.log('User ' + data + ' have joined');
         socket.broadcast.emit('new-user', data);
     });
-    socket.on('user-join', function (data) {
-        socket.broadcast.emit('new-user', data);
+    socket.on('user-logout', function (data) {
+        socket.broadcast.emit('logout-user', data);
     });
     socket.on('sendMessage', function(data, user){
         socket.broadcast.emit('receiveMessage', data, user);
