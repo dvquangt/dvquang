@@ -8,20 +8,14 @@ var connection = pg.connect(process.env.DATABASE_URL, function(err, client) {
 		if (err) throw err;
 		connection = client;
 	});
-app.listen(app.get('port'), function() {
-  console.log('Node app is running on port', app.get('port'));
-});
+
 // Start SocketIO
-var socketIO = require('socket.io'),
-    http = require('http'),
-    port = process.env.PORT || 5000,
-    ip = process.env.IP || '192.168.0.120',
-    server = http.createServer().listen(port, ip, function(){
-        console.log('Started Socket.IO');
-    }),
-    io = socketIO.listen(server);
-io.set('match origin protocol', true);
-io.set('origins', '*:*');
+var http = require('http'), io = require('socket.io');
+var server = http.createServer(function(req, res){ 
+	console.log('Started Socket.IO');
+});
+server.listen(8080);
+var socket = io.listen(server);
 var run = function (socket){
     socket.on('user-join', function (data) {
         console.log('User ' + data + ' have joined');
@@ -34,7 +28,7 @@ var run = function (socket){
         socket.broadcast.emit('receiveMessage', data, user);
     });
 }
-io.sockets.on('connection', run);
+socket.on('connection', run);
 // end SocketIO
 
 app.set('port', (process.env.PORT || 5000));
@@ -49,6 +43,10 @@ app.set('view engine', 'ejs');
 
 app.get('/', function(request, response) {
   response.render('pages/index');
+});
+
+app.listen(app.get('port'), function() {
+  console.log('Node app is running on port', app.get('port'));
 });
 
 app.all('*', function(req, res, next) {
